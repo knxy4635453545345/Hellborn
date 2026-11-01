@@ -28,11 +28,15 @@ jobs:
         run: |
           mkdir -p third_party
           git clone --depth 1 https://github.com/ocornut/imgui third_party/imgui
-          git clone --depth 1 https://github.com/jmpews/Dobby  third_party/Dobby
+          git clone --depth 1 https://github.com/js6pak/Dobby third_party/Dobby
+          cd third_party/Dobby
+          git fetch --depth 1 origin 0932d69c320e786672361ab53825ba8f4245e9d3
+          git checkout 0932d69c320e786672361ab53825ba8f4245e9d3
+          cd ../..
 
       - name: patch dobby asm
         run: |
-          find third_party/Dobby -name "*.asm" -path "*arm64*" -print -exec sed -i -E 's/(, *)([^,[:space:]]+)@PAGEOFF/\1:lo12:\2/g; s/(, *)([^,[:space:]]+)@PAGE/\1:pg_hi21:\2/g' {} +
+          find third_party/Dobby -name "*.asm" -path "*arm64*" -exec sed -i -E 's/([^,[:space:]]+)@PAGEOFF/:lo12:\1/g; s/@PAGE//g' {} +
           echo "--- verificando patch ---"
           grep -rn "common_closure_bridge_handler" third_party/Dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.asm || true
 

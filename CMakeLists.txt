@@ -22,7 +22,6 @@ target_include_directories(imgui PUBLIC
 )
 
 # ----- Dobby (hook engine) -----
-set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=armv8-a")
 add_subdirectory(third_party/Dobby)
 # exporta target: dobby
 
