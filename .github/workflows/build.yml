@@ -32,7 +32,7 @@ jobs:
 
       - name: patch dobby asm
         run: |
-          find third_party/Dobby -name "*.asm" -path "*arm64*" -print -exec sed -i 's/@PAGE/:pg_hi21:/g; s/@PAGEOFF/:lo12:/g' {} +
+          find third_party/Dobby -name "*.asm" -path "*arm64*" -print -exec sed -i -E 's/(, *)([^,[:space:]]+)@PAGEOFF/\1:lo12:\2/g; s/(, *)([^,[:space:]]+)@PAGE/\1:pg_hi21:\2/g' {} +
           echo "--- verificando patch ---"
           grep -rn "common_closure_bridge_handler" third_party/Dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.asm || true
 
