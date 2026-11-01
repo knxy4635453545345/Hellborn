@@ -13,6 +13,22 @@ jobs:
         with:
           submodules: recursive
 
+      - name: organizar arquivos
+        run: |
+          echo "--- antes ---"
+          ls -la
+          if [ -f "cmakelist.txt" ]; then mv cmakelist.txt CMakeLists.txt; fi
+          mkdir -p jni hooks menu include
+          [ -f "hellborn.cpp" ] && mv hellborn.cpp jni/hellborn.cpp || true
+          [ -f "Stealth.cpp" ] && mv Stealth.cpp jni/stealth.cpp || true
+          [ -f "mira.cpp" ] && mv mira.cpp hooks/aimbot.cpp || true
+          [ -f "visualizador.cpp" ] && mv visualizador.cpp hooks/esp.cpp || true
+          [ -f "overlay.cpp" ] && mv overlay.cpp menu/overlay.cpp || true
+          [ -f "hellborn.h" ] && mv hellborn.h include/hellborn.h || true
+          echo "--- depois ---"
+          ls -la
+          find . -maxdepth 2 \( -name "*.cpp" -o -name "*.h" -o -name "CMakeLists.txt" \) -print
+
       - name: clone imgui e dobby
         run: |
           mkdir -p third_party
