@@ -48,8 +48,18 @@ jobs:
             -DANDROID_PLATFORM=android-24 \
             -DCMAKE_BUILD_TYPE=Release
 
+      - name: compile check
+        run: |
+          for f in jni/hellborn.cpp jni/stealth.cpp hooks/esp.cpp hooks/aimbot.cpp menu/overlay.cpp; do
+            echo "=== $f ==="
+            $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++ \
+              -std=c++20 -fsyntax-only -Iinclude -Ithird_party/imgui -Ithird_party/Dobby/include "$f" || true
+          done
+
       - name: build
-        run: cmake --build build -j$(nproc)
+        run: |
+          set -x
+          cmake --build build --verbose -j$(nproc)
 
       - name: check
         run: |
