@@ -15,7 +15,7 @@ jobs:
 
       - name: organizar arquivos
         run: |
-          if [ -f "cmakelist.txt" ]; then mv cmakelist.txt CMakeLists.txt; fi
+          if [ -f "cmakelist.txt" ] && [ ! -f "CMakeLists.txt" ]; then mv cmakelist.txt CMakeLists.txt; fi
           mkdir -p jni hooks menu include
           [ -f "hellborn.cpp" ] && mv hellborn.cpp jni/hellborn.cpp || true
           [ -f "Stealth.cpp" ] && mv Stealth.cpp jni/stealth.cpp || true
@@ -29,6 +29,12 @@ jobs:
           mkdir -p third_party
           git clone --depth 1 https://github.com/ocornut/imgui third_party/imgui
           git clone --depth 1 https://github.com/jmpews/Dobby  third_party/Dobby
+
+      - name: patch dobby asm
+        run: |
+          find third_party/Dobby -name "*.asm" -path "*arm64*" -print -exec sed -i 's/@PAGE/:pg_hi21:/g; s/@PAGEOFF/:lo12:/g' {} +
+          echo "--- verificando patch ---"
+          grep -rn "common_closure_bridge_handler" third_party/Dobby/source/TrampolineBridge/ClosureTrampolineBridge/arm64/closure_bridge_arm64.asm || true
 
       - name: install ndk
         uses: nttld/setup-ndk@v1
